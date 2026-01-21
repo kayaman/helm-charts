@@ -1,0 +1,19 @@
+apiVersion: v2
+name: parrot
+description: A modern HTTP echo server that parrots back request information
+type: application
+version: 1.1.0
+appVersion: 1.1.0
+home: https://github.com/kayaman/parrot
+sources:
+  - https://github.com/kayaman/parrot
+keywords:
+  - http
+  - echo
+  - debugging
+  - monitoring
+  - parrot
+maintainers:
+  - name: kayaman
+    url: https://github.com/kayaman
+icon: https://raw.githubusercontent.com/kayaman/parrot/main/docs/assets/parrot-icon.png
