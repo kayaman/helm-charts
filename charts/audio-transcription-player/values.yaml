@@ -33,17 +33,6 @@ service:
   type: ClusterIP
   port: 3000
 
-ingress:
-  enabled: false
-  className: ''
-  annotations: {}
-  hosts:
-    - host: audio-transcription-player.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls: []
-
 resources:
   limits:
     cpu: 500m
