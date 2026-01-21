@@ -95,4 +95,5 @@ env:
   - name: NEXT_TELEMETRY_DISABLED
     value: "1"
 
+# Additional environment sources; validation is defined in values.schema.json.
 envFrom: []
