@@ -1,0 +1,17 @@
+apiVersion: v2
+name: audio-transcription-player
+description: A professional web application for playing audio files with synchronized transcription text highlighting
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+home: https://github.com/kayaman/audio-transcription-player
+sources:
+  - https://github.com/kayaman/audio-transcription-player
+keywords:
+  - audio
+  - transcription
+  - player
+  - nextjs
+maintainers:
+  - name: kayaman
+    url: https://github.com/kayaman
