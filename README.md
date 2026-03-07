@@ -21,6 +21,11 @@ A professional web application for playing audio files with synchronized transcr
 
 **Repository:** [kayaman/audio-transcription-player](https://github.com/kayaman/audio-transcription-player)
 
+### 4. Lylics
+A lightweight Rust microservice that streams random lyrics chunks via Server-Sent Events (SSE).
+
+**Repository:** [kayaman/lylics](https://github.com/kayaman/lylics)
+
 ## Usage
 
 ### Prerequisites
@@ -45,6 +50,9 @@ helm install my-parrot ./charts/parrot -f custom-values.yaml
 
 # Install a specific chart version
 helm install my-parrot ./charts/parrot --version 1.1.0
+
+# Install lylics with custom lyrics data
+helm install lylics ./charts/lylics --set lyricsData='["hello world","another lyric"]'
 ```
 
 ### Upgrading a Chart
