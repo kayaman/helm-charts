@@ -53,9 +53,10 @@ spec:
               containerPort: {{ .Values.service.port }}
               protocol: TCP
           env:
-            {{- range $key, $value := .Values.env }}
+            {{- $env := .Values.env }}
+            {{- range $key := $env | keys | sortAlpha }}
             - name: {{ $key }}
-              value: {{ $value | quote }}
+              value: {{ index $env $key | quote }}
             {{- end }}
             {{- if .Values.lyricsData }}
             - name: LYLICS_DATA_PATH
