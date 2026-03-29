@@ -4,7 +4,7 @@ AI Gateway has been deployed successfully!
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}
-  https{{ if $.Values.ingress.tls }}{{ end }}://{{ $host.host }}{{ .path }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ $host.host }}{{ .path }}
   {{- end }}
 {{- end }}
 {{- else if contains "NodePort" .Values.service.type }}
