@@ -16,8 +16,8 @@ AI Gateway has been deployed successfully!
   echo http://$SERVICE_IP:{{ .Values.service.port }}
 {{- else }}
   export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "ai-gateway.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 3000:3000
-  echo "Visit http://127.0.0.1:3000"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME {{ .Values.service.port }}:{{ .Values.service.port }}
+  echo "Visit http://127.0.0.1:{{ .Values.service.port }}"
 {{- end }}
 
 2. Admin console:
