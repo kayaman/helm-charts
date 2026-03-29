@@ -35,11 +35,14 @@ service:
 
 ingress:
   enabled: true
-  className: nginx
+  className: kong
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    konghq.com/protocols: "https"
+    konghq.com/https-redirect-status-code: "301"
+    konghq.com/connect-timeout: "60000"
+    konghq.com/read-timeout: "300000"
+    konghq.com/write-timeout: "300000"
   hosts:
     - host: ai-gateway.ai-assisted.dev
       paths:
