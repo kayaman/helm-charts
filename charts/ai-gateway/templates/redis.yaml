@@ -1,0 +1,70 @@
+{{- if .Values.internalRedis.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-gateway-redis-master
+  labels:
+    {{- include "ai-gateway.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      name: redis
+  selector:
+    {{- include "ai-gateway.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: ai-gateway-redis-master
+  labels:
+    {{- include "ai-gateway.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  serviceName: ai-gateway-redis-master
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "ai-gateway.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: redis
+  template:
+    metadata:
+      labels:
+        {{- include "ai-gateway.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: redis
+    spec:
+      containers:
+        - name: redis
+          image: "{{ .Values.internalRedis.image }}"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.internalRedis.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: {{ .Values.internalRedis.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.internalRedis.storage }}
+{{- end }}

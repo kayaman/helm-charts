@@ -112,9 +112,37 @@ nodeSelector: {}
 tolerations: []
 affinity: {}
 
-# ── Bitnami PostgreSQL sub-chart ───────────────────────────────────────────────
-postgresql:
+# ── Lightweight PostgreSQL (official postgres:16 image, no Bitnami dependency) ─
+internalPostgresql:
   enabled: true
+  image: "postgres:16-alpine"
+  storage: 10Gi
+  storageClass: do-block-storage
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# ── Lightweight Redis (official redis:7 image, no Bitnami dependency) ──────────
+internalRedis:
+  enabled: true
+  image: "redis:7-alpine"
+  storage: 1Gi
+  storageClass: do-block-storage
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ── Bitnami PostgreSQL sub-chart (disabled — images no longer available on Docker Hub free tier) ─
+postgresql:
+  enabled: false
   auth:
     username: gateway
     database: gateway
@@ -136,9 +164,9 @@ postgresql:
         cpu: 500m
         memory: 512Mi
 
-# ── Bitnami Redis sub-chart ───────────────────────────────────────────────────
+# ── Bitnami Redis sub-chart (disabled — images no longer available on Docker Hub free tier) ─
 redis:
-  enabled: true
+  enabled: false
   auth:
     enabled: false
   architecture: standalone
