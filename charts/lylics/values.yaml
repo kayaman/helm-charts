@@ -73,8 +73,10 @@ readinessProbe:
   failureThreshold: 3
 
 env:
-  LYLICS_PORT: "3000"
-  RUST_LOG: "lylics=info"
+  - name: LYLICS_PORT
+    value: "3000"
+  - name: RUST_LOG
+    value: "lylics=info"
 
 # Mount custom lyrics as a ConfigMap (flat JSON array of strings)
 lyricsData: ""
