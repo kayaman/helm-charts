@@ -1,0 +1,31 @@
+apiVersion: v2
+name: ai-gateway
+description: LLM proxy gateway with semantic cache, cost tracking, and admin console
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://github.com/kayaman/ai-gateway
+sources:
+  - https://github.com/kayaman/ai-gateway
+keywords:
+  - llm
+  - gateway
+  - proxy
+  - ai
+  - openai
+  - anthropic
+  - cost-tracking
+maintainers:
+  - name: kayaman
+    url: https://github.com/kayaman
+icon: https://raw.githubusercontent.com/kayaman/ai-gateway/main/docs/assets/icon.png
+
+dependencies:
+  - name: postgresql
+    version: "~16.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "~20.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled

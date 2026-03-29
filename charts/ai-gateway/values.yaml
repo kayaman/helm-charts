@@ -1,0 +1,153 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/kayaman/ai-gateway
+  pullPolicy: IfNotPresent
+  tag: "0.1.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+  runAsGroup: 1001
+  fsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1001
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+  hosts:
+    - host: ai-gateway.ai-assisted.dev
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: gateway-tls
+      hosts:
+        - ai-gateway.ai-assisted.dev
+
+# Non-secret env vars. Secrets are injected from secretName below.
+env:
+  GATEWAY_HOST: "0.0.0.0"
+  GATEWAY_PORT: "3000"
+  CACHE_ENABLED: "true"
+  RUST_LOG: "info"
+  RATE_LIMIT_RPS: "60"
+  RATE_LIMIT_BURST: "10"
+  DEFAULT_PROVIDER: "openai"
+  # Redis URL auto-wired from sub-chart service name when redis.enabled=true
+  REDIS_URL: "redis://ai-gateway-redis-master:6379"
+
+# Name of K8s Secret containing sensitive values.
+# Create with: bash scripts/secrets/create-secrets.sh
+secretName: gateway-secrets
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 15
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# ── Bitnami PostgreSQL sub-chart ───────────────────────────────────────────────
+postgresql:
+  enabled: true
+  auth:
+    username: gateway
+    database: gateway
+    # Password injected from gateway-secrets (pg-password key).
+    existingSecret: gateway-secrets
+    secretKeys:
+      adminPasswordKey: pg-password
+      userPasswordKey: pg-password
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: do-block-storage
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+
+# ── Bitnami Redis sub-chart ───────────────────────────────────────────────────
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  architecture: standalone
+  master:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: do-block-storage
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
