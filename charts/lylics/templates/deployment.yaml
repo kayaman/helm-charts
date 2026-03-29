@@ -70,15 +70,19 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.lyricsData }}
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            {{- if .Values.lyricsData }}
             - name: lyrics
               mountPath: /data
               readOnly: true
-          {{- end }}
-      {{- if .Values.lyricsData }}
+            {{- end }}
       volumes:
+        - name: tmp
+          emptyDir: {}
+        {{- if .Values.lyricsData }}
         - name: lyrics
           configMap:
             name: {{ include "lylics.fullname" . }}-lyrics
-      {{- end }}
+        {{- end }}
