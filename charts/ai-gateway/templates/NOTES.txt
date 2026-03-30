@@ -21,10 +21,26 @@ AI Gateway has been deployed successfully!
 {{- end }}
 
 2. Admin console:
-   https://ai-gateway.ai-assisted.dev/admin
+{{- if .Values.ingress.enabled }}
+   https{{ if .Values.ingress.tls }}{{ end }}://{{ (index .Values.ingress.hosts 0).host }}/admin
+{{- else if contains "NodePort" .Values.service.type }}
+   http://$NODE_IP:$NODE_PORT/admin
+{{- else if contains "LoadBalancer" .Values.service.type }}
+   http://$SERVICE_IP:{{ .Values.service.port }}/admin
+{{- else }}
+   http://127.0.0.1:3000/admin
+{{- end }}
 
 3. Health check:
-   curl https://ai-gateway.ai-assisted.dev/health
+{{- if .Values.ingress.enabled }}
+   curl https{{ if .Values.ingress.tls }}{{ end }}://{{ (index .Values.ingress.hosts 0).host }}/health
+{{- else if contains "NodePort" .Values.service.type }}
+   curl http://$NODE_IP:$NODE_PORT/health
+{{- else if contains "LoadBalancer" .Values.service.type }}
+   curl http://$SERVICE_IP:{{ .Values.service.port }}/health
+{{- else }}
+   curl http://127.0.0.1:3000/health
+{{- end }}
 
 4. Sub-charts enabled:
    PostgreSQL: {{ .Values.postgresql.enabled }}
