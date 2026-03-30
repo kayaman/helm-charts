@@ -62,8 +62,10 @@ env:
   RATE_LIMIT_RPS: "60"
   RATE_LIMIT_BURST: "10"
   DEFAULT_PROVIDER: "openai"
-  # Redis URL auto-wired from sub-chart service name when redis.enabled=true
-  REDIS_URL: "redis://ai-gateway-redis-master:6379"
+  # Redis URL. When redis.enabled=true and using the bundled Bitnami Redis,
+  # set this to: redis://<release-name>-redis-master:6379
+  # (for example, redis://ai-gateway-redis-master:6379 if the release name is "ai-gateway").
+  REDIS_URL: ""
 
 # Name of K8s Secret containing sensitive values.
 # Create with: bash scripts/secrets/create-secrets.sh
