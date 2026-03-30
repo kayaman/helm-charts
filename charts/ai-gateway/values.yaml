@@ -37,21 +37,21 @@ ingress:
   enabled: true
   className: kong
   annotations:
+  enabled: false
+  className: nginx
+  annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    konghq.com/protocols: "https"
-    konghq.com/https-redirect-status-code: "301"
-    konghq.com/connect-timeout: "60000"
-    konghq.com/read-timeout: "300000"
-    konghq.com/write-timeout: "300000"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
   hosts:
-    - host: ai-gateway.ai-assisted.dev
+    - host: ai-gateway.local
       paths:
         - path: /
           pathType: Prefix
   tls:
     - secretName: gateway-tls
       hosts:
-        - ai-gateway.ai-assisted.dev
+        - ai-gateway.local
 
 # Non-secret env vars. Secrets are injected from secretName below.
 env:
